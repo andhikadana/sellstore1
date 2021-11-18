@@ -1,67 +1,63 @@
+<?php 
+ 
+include 'config.php';
+ 
+error_reporting(0);
+ 
+session_start();
+ 
+if (isset($_SESSION['username'])) {
+    header("Location: berhasil_login.php");
+}
+ 
+if (isset($_POST['submit'])) {
+    $email = $_POST['email'];
+    $password = md5($_POST['password']);
+ 
+    $sql = "SELECT * FROM users WHERE email='$email' AND password='$password'";
+    $result = mysqli_query($conn, $sql);
+    if ($result->num_rows > 0) {
+        $row = mysqli_fetch_assoc($result);
+        $_SESSION['username'] = $row['username'];
+        header("Location: berhasil_login.php");
+    } else {
+        echo "<script>alert('Email atau password Anda salah. Silahkan coba lagi!')</script>";
+    }
+}
+ 
+?>
+ 
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LOGIN</title>
-    <link rel="stylesheet" href="css/bootstrap.css"> 
-    <link rel="stylesheet" href="css/login.css">
+ 
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+ 
+    <link rel="stylesheet" type="text/css" href="style.css">
+ 
+    <title>Adii login</title>
 </head>
 <body>
-    <br>
-    <!-- Cek Notifikasi -->
-    <?php
-    if(isset($_GET['pesan'])){
-    if($_GET['pesan'] == "gagal"){
-        echo "Login Gagal! Username Dan Password Salah!";
-    }elseif($_GET['pesan'] == "logout"){
-        echo "Anda Berhasil Logout";
-    }elseif($_GET['pesan'] == "belum_login"){
-        echo "Anda Harus Login Dulu Untuk Mengakses halaman login";
-    }
-}?>
-    <br/>
-    <br/>
+    <div class="alert alert-warning" role="alert">
+        <?php echo $_SESSION['error']?>
+    </div>
+ 
     <div class="container">
-        <div class="row">
-            <div class="col-lg-6 col-md-8 login-box">
-                <div class="col-lg-12 login-title">
-                Selamat Datang Silahkan Login
-                </div>
-                <div class="col-12 col-lg-12 col-md-12 col-xl-12 login-form">
-                    <div class="col-lg-12 col-sm-12 col-md-12 col-xl-12 col-xll-12 login-form">
-                        <form method="post" action="cek_login.php">
-                            <div class="form-group">
-                                <label class="form-control-label">USERNAME</label>
-                                <input type="text" name="username" class="form-control">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-control-label">PASSWORD</label>
-                                <input type="password" name="password" class="form-control" i>
-                            </div>
-
-                            <div class="loginbttm">
-                                <div class="login-btm login-text">
-                                <?php
-                                if(isset($_GET['pesan'])){
-                                if($_GET['pesan'] == "gagal"){
-                                    echo "Login Gagal! Username Dan Password Salah!";
-                                }elseif($_GET['pesan'] == "logout"){
-                                     echo "Anda Berhasil Logout";
-                                }elseif($_GET['pesan'] == "belum_login"){
-                                     echo "Anda Harus Login Dulu Untuk Mengakses halaman login";
-                                }
-                                }?>
-                                </div>
-                                <div class="col-lg-6 login-btm login-button">
-                                    <button type="submit" class="btn btn-outline-primary">LOGIN</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
+        <form action="" method="POST" class="login-email">
+            <p class="login-text" style="font-size: 2rem; font-weight: 800;">Login</p>
+            <div class="input-group">
+                <input type="email" placeholder="Email" name="email" value="<?php echo $email; ?>" required>
             </div>
-        </div>
+            <div class="input-group">
+                <input type="password" placeholder="Password" name="password" value="<?php echo $_POST['password']; ?>" required>
+            </div>
+            <div class="input-group">
+                <button name="submit" class="btn">Login</button>
+            </div>
+            <p class="login-register-text">Anda belum punya akun? <a href="register.php">Register</a></p>
+        </form>
+    </div>
 </body>
-</html
+</html>
